@@ -1,0 +1,19 @@
+id: event-stream-logging
+title: "Add Server-Sent Events (SSE) for Real-time Logging"
+description: |
+  Implement a Server-Sent Events (SSE) endpoint to stream real-time log events to an admin dashboard.
+  This allows administrators to monitor application activity in real-time.
+requirements:
+  - Create an API route `/api/logs/stream` that establishes an SSE connection.
+  - When a new log entry is created in the database, the event should be pushed to all connected clients.
+  - Use a global event emitter or a pub/sub mechanism to broadcast log events.
+difficulty: hard
+estimated_time: 80
+tags: [sse, real-time, logging, events]
+files_to_modify:
+  - src/app/api/logs/stream/route.ts
+  - src/lib/logger.ts
+success_criteria:
+  - The SSE endpoint correctly streams log events to connected clients.
+  - New log entries are immediately sent to the clients.
+  - The connection remains open and handles multiple clients.

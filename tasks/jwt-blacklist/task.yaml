@@ -1,0 +1,19 @@
+id: jwt-blacklist
+title: "Implement JWT Blacklisting for Logout"
+description: |
+  Implement a JWT blacklisting mechanism to properly handle user logout.
+  When a user logs out, their JWT should be added to a blacklist in Redis to prevent it from being used again.
+requirements:
+  - Create a middleware to check if a JWT is blacklisted.
+  - On logout, add the JWT to the Redis blacklist with an expiry equal to the token's remaining validity.
+  - The middleware should run on all protected routes.
+difficulty: hard
+estimated_time: 75
+tags: [security, jwt, redis, authentication]
+files_to_modify:
+  - src/middleware/auth.ts
+  - src/app/api/auth/logout/route.ts
+success_criteria:
+  - A blacklisted JWT cannot be used to access protected routes.
+  - The Redis entry for the blacklisted JWT has the correct expiry.
+  - The logout endpoint successfully blacklists the JWT.

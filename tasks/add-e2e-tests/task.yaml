@@ -1,0 +1,21 @@
+id: add-e2e-tests
+title: "Use Playwright to Create E2E Flow for Login/Register/Dashboard"
+description: |
+  Add end-to-end (E2E) tests to the application using Playwright.
+  The E2E tests should cover the critical user flows of registration, login, and viewing the dashboard.
+requirements:
+  - Install and configure Playwright for the Next.js application.
+  - Create a new E2E test file in a `e2e` directory.
+  - The test should simulate a user registering a new account.
+  - After registration, the test should log the user in with the new credentials.
+  - Finally, the test should navigate to the dashboard and verify that the user's email is displayed.
+difficulty: hard
+estimated_time: 120
+tags: [e2e, testing, playwright, nextjs]
+files_to_modify:
+  - e2e/auth.spec.ts
+  - playwright.config.ts
+success_criteria:
+  - Playwright is correctly configured and runs the E2E tests.
+  - The E2E test successfully completes the registration, login, and dashboard flow.
+  - The test verifies that the correct user information is displayed on the dashboard.

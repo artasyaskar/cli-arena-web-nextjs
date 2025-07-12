@@ -1,0 +1,18 @@
+id: stream-csv-upload
+title: "Implement Streamed CSV to Postgres Upload"
+description: |
+  Implement an endpoint that accepts a streaming CSV upload and inserts the data into the database in batches.
+  This is useful for handling large datasets without consuming a lot of memory.
+requirements:
+  - Create an API route `/api/users/upload` that accepts a `POST` request with a CSV file.
+  - The route should parse the CSV stream and insert the user data into the `User` table in batches of 100.
+  - Use a library like `csv-parse` to handle the CSV parsing.
+difficulty: hard
+estimated_time: 90
+tags: [csv, streaming, database, performance]
+files_to_modify:
+  - src/app/api/users/upload/route.ts
+success_criteria:
+  - The endpoint successfully processes a large CSV file without crashing.
+  - The user data from the CSV is correctly inserted into the database.
+  - The tests verify that the streaming and batching logic works correctly.
