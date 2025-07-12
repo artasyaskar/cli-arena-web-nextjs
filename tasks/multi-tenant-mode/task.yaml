@@ -1,0 +1,19 @@
+id: multi-tenant-mode
+title: "Restructure DB for Multi-Tenancy"
+description: |
+  Refactor the database schema and application logic to support multi-tenancy.
+  Each user should belong to an organization, and all data should be scoped to that organization.
+requirements:
+  - Add an `organizationId` to the `User` model in `schema.prisma`.
+  - Create a Prisma middleware to enforce tenancy rules on all database queries.
+  - The middleware should automatically add a `where` clause with the `organizationId` to all find queries on tenant-specific models.
+difficulty: hard
+estimated_time: 90
+tags: [database, multi-tenancy, prisma, security]
+files_to_modify:
+  - db/prisma/schema.prisma
+  - src/lib/prisma.ts
+success_criteria:
+  - Users can only access data within their own organization.
+  - The Prisma middleware correctly scopes queries to the user's organization.
+  - Tests verify that data is properly isolated between tenants.

@@ -1,0 +1,20 @@
+id: convert-to-server-actions
+title: "Refactor API Routes to Server Actions"
+description: |
+  Refactor the existing API routes for creating and updating user profiles to use Next.js Server Actions.
+  Use Zod for input validation.
+requirements:
+  - Create a new `src/app/actions.ts` file to house the server actions.
+  - Refactor the `/api/user/create` and `/api/user/update` routes to use server actions.
+  - Implement input validation using Zod.
+difficulty: medium
+estimated_time: 45
+tags: [refactor, server-actions, nextjs]
+files_to_modify:
+  - src/app/actions.ts
+  - src/app/api/user/create/route.ts
+  - src/app/api/user/update/route.ts
+success_criteria:
+  - The new server actions correctly handle user creation and updates.
+  - Zod validation is implemented and prevents invalid data from being submitted.
+  - The tests for the server actions pass.

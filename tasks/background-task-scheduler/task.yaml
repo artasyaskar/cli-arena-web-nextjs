@@ -1,0 +1,19 @@
+id: background-task-scheduler
+title: "Add Scheduled Daily Job to Prune Old Sessions"
+description: |
+  Implement a background task scheduler that runs a daily job to prune old, expired sessions from the database.
+  This helps to keep the database clean and maintain performance.
+requirements:
+  - Use a library like `node-cron` to schedule a job to run once a day.
+  - Create a script `src/jobs/prune-sessions.ts` that contains the logic for deleting expired sessions from the `Session` table.
+  - The job should be started when the application starts.
+difficulty: hard
+estimated_time: 90
+tags: [background-job, cron, scheduler, database]
+files_to_modify:
+  - src/jobs/prune-sessions.ts
+  - src/app/server.ts
+success_criteria:
+  - A cron job is scheduled to run daily.
+  - The job correctly deletes expired sessions from the database.
+  - The tests verify that the scheduler is started and that the pruning logic works correctly.
