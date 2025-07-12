@@ -21,12 +21,19 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.6.0",
     "@vitest/ui": "^3.2.4",
     "eslint": "^9",
     "eslint-config-next": "15.3.5",
+    "jsdom": "^26.1.0",
     "prisma": "^6.11.1",
     "tailwindcss": "^4",
+    "tsx": "^4.20.3",
     "typescript": "^5",
     "vitest": "^3.2.4"
+  },
+  "prisma": {
+    "schema": "db/prisma/schema.prisma",
+    "seed": "tsx db/seed.ts"
   }
 }
