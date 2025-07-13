@@ -1,17 +1,19 @@
 import { expect, test, vi } from 'vitest';
 import { Prisma } from '@prisma/client';
 
+// Mock the PrismaClient
+const mockPrismaClient = {
+  $extends: vi.fn().mockReturnThis(),
+  user: {
+    findUnique: vi.fn(),
+  },
+};
+
 vi.mock('@prisma/client', async () => {
   const originalModule = await vi.importActual('@prisma/client');
-  const PrismaClient = vi.fn().mockImplementation(() => ({
-    $extends: vi.fn().mockReturnThis(), // Ensure $extends can be called
-    user: {
-      findUnique: vi.fn(),
-    },
-  }));
   return {
     ...originalModule,
-    PrismaClient,
+    PrismaClient: vi.fn(() => mockPrismaClient),
     Prisma: {
       ...originalModule.Prisma,
       PrismaClientKnownRequestError: class extends Error {
@@ -25,40 +27,94 @@ vi.mock('@prisma/client', async () => {
   };
 });
 
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
 test('should retry queries on database connection error', async () => {
   const { prisma } = await import('@/lib/prisma');
-  const query = vi.fn();
+  const query = mockPrismaClient.user.findUnique;
   const error = new Prisma.PrismaClientKnownRequestError('Connection error', 'P1001');
 
-  // Manually invoke the extension logic for testing
-  const extendedQuery = prisma.$extends({
+  // Simulate the extension logic
+  let attempts = 0;
+  const mockQuery = async () => {
+    attempts++;
+    if (attempts < 5) {
+      throw error;
+    }
+    return { id: '1', name: 'Test User' };
+  };
+  query.mockImplementation(mockQuery);
+
+  // Apply the extension
+  const extendedPrisma = prisma.$extends({
     query: {
       user: {
         async findUnique(params) {
-          const maxRetries = 5;
-          for (let i = 0; i < maxRetries; i++) {
+          const findUniqueWithRetry = async (retries: number): Promise<any> => {
             try {
-              if (i < 4) {
-                query();
-                throw error;
-              }
-              return query(params.args);
+              return await params.query(params.args);
             } catch (e) {
-              if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P1001') {
-                const delay = Math.pow(2, i) * 100;
-                if (i === maxRetries - 1) throw e;
+              if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P1001' && retries > 0) {
+                const delay = Math.pow(2, 5 - retries) * 100;
                 await new Promise(res => setTimeout(res, delay));
-              } else {
-                throw e;
+                return findUniqueWithRetry(retries - 1);
               }
+              throw e;
             }
-          }
-        }
-      }
-    }
+          };
+          return findUniqueWithRetry(5);
+        },
+      },
+    },
   });
 
-  await extendedQuery.user.findUnique({ where: { id: '1' } });
+  await expect(extendedPrisma.user.findUnique({ where: { id: '1' } })).rejects.toThrow('Connection error');
+
+  expect(query).toHaveBeenCalledTimes(5);
+});
+
+test('should retry queries on database connection error', async () => {
+  const { prisma } = await import('@/lib/prisma');
+  const query = mockPrismaClient.user.findUnique;
+  const error = new Prisma.PrismaClientKnownRequestError('Connection error', 'P1001');
+
+  // Simulate the extension logic
+  let attempts = 0;
+  const mockQuery = async () => {
+    attempts++;
+    if (attempts < 5) {
+      throw error;
+    }
+    return { id: '1', name: 'Test User' };
+  };
+  query.mockImplementation(mockQuery);
+
+  // Apply the extension
+  const extendedPrisma = prisma.$extends({
+    query: {
+      user: {
+        async findUnique(params) {
+          const findUniqueWithRetry = async (retries: number): Promise<any> => {
+            try {
+              return await params.query(params.args);
+            } catch (e) {
+              if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P1001' && retries > 0) {
+                const delay = Math.pow(2, 5 - retries) * 100;
+                await new Promise(res => setTimeout(res, delay));
+                return findUniqueWithRetry(retries - 1);
+              }
+              throw e;
+            }
+          };
+          return findUniqueWithRetry(5);
+        },
+      },
+    },
+  });
+
+  await expect(extendedPrisma.user.findUnique({ where: { id: '1' } })).rejects.toThrow('Connection error');
 
   expect(query).toHaveBeenCalledTimes(5);
 });

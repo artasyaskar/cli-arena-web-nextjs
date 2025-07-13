@@ -2,7 +2,7 @@
 
 setup:
 	npm install
-	npx prisma migrate dev --name init
+	./db/check-and-migrate.sh
 	npx prisma db seed
 
 build:

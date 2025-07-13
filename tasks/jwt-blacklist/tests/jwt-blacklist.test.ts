@@ -7,8 +7,9 @@ import * as jwt from 'jsonwebtoken';
 const SECRET_KEY = 'your-secret-key';
 process.env.JWT_SECRET = SECRET_KEY;
 
+let store: Record<string, string> = {};
+
 vi.mock('ioredis', () => {
-  const store: Record<string, string> = {};
   const Redis = vi.fn(() => ({
     get: vi.fn(async (key: string) => store[key] || null),
     set: vi.fn(async (key: string, value: string) => {
@@ -19,12 +20,27 @@ vi.mock('ioredis', () => {
   return { Redis };
 });
 
+beforeEach(() => {
+  store = {};
+  vi.clearAllMocks();
+});
+
+vi.mock('@/lib/prisma', () => ({
+  prisma: {
+    auditLog: {
+      create: vi.fn(),
+    },
+  },
+}));
+
 test('should blacklist a JWT on logout', async () => {
   const token = jwt.sign({ userId: '1' }, SECRET_KEY, { expiresIn: '1h' });
   const request = new NextRequest('http://localhost/api/auth/logout', {
     method: 'POST',
     headers: { authorization: `Bearer ${token}` },
   });
+
+  (prisma.auditLog.create as any).mockResolvedValue({});
 
   const response = await logout(request);
   expect(response.status).toBe(200);

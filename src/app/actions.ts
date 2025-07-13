@@ -3,27 +3,33 @@
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 
+import { z } from 'zod';
+
+const UserSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email('Invalid email'),
+  password: z.string().min(8, 'String must contain at least 8 character(s)'),
+});
+
 export async function createUser(formData: FormData) {
-  const name = formData.get('name') as string;
-  const email = formData.get('email') as string;
+  const validatedFields = UserSchema.safeParse({
+    name: formData.get('name'),
+    email: formData.get('email'),
+    password: formData.get('password'),
+  });
 
-  if (!name || !email) {
-    throw new Error('Name and email are required');
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
   }
 
-  try {
-    const user = await prisma.user.create({
-      data: {
-        name,
-        email,
-      },
-    });
+  const user = await prisma.user.create({
+    data: validatedFields.data,
+  });
 
-    revalidatePath('/users');
-    return { success: true, user };
-  } catch (error) {
-    throw new Error('Failed to create user');
-  }
+  revalidatePath('/users');
+  return { success: true, user };
 }
 
 export async function updateUser(id: string, formData: FormData) {

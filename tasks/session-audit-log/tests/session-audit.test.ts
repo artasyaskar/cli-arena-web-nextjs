@@ -20,6 +20,27 @@ vi.mock('@/lib/prisma', () => ({
   },
 }));
 
+vi.mock('ratelimiter', () => {
+  const Ratelimiter = vi.fn(() => {
+    return {
+      limit: vi.fn(() => ({ success: true })),
+    };
+  });
+  return { Ratelimiter };
+});
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
+vi.mock('ioredis', () => {
+  const Redis = vi.fn(() => ({
+    get: vi.fn().mockResolvedValue(null),
+    set: vi.fn().mockResolvedValue('OK'),
+  }));
+  return { Redis };
+});
+
 test('should create audit log on login', async () => {
   const user = { id: '1', email: 'test@example.com' };
   (prisma.user.findUnique as any).mockResolvedValue(user);
@@ -28,7 +49,9 @@ test('should create audit log on login', async () => {
     method: 'POST',
     body: JSON.stringify({ email: 'test@example.com', password: 'password' }),
     headers: { 'user-agent': 'test-agent' },
-    ip: '127.0.0.1',
+  });
+  Object.defineProperty(request, 'ip', {
+    get: () => '127.0.0.1',
   });
 
   await login(request);
@@ -48,7 +71,9 @@ test('should create audit log on logout', async () => {
     const request = new NextRequest('http://localhost/api/auth/logout', {
       method: 'POST',
       headers: { 'user-agent': 'test-agent', 'authorization': `Bearer ${token}` },
-      ip: '127.0.0.1',
+    });
+    Object.defineProperty(request, 'ip', {
+      get: () => '127.0.0.1',
     });
 
     await logout(request);
@@ -69,7 +94,9 @@ test('should create audit log on token refresh', async () => {
       method: 'POST',
       body: JSON.stringify({ refreshToken }),
       headers: { 'user-agent': 'test-agent' },
-      ip: '127.0.0.1',
+    });
+    Object.defineProperty(request, 'ip', {
+      get: () => '127.0.0.1',
     });
 
     await refresh(request);
