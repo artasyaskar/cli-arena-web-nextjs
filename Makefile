@@ -5,9 +5,9 @@ clean:
 	@rm -rf node_modules .next package-lock.json || true
 	@find node_modules -type d -name 'build' -exec rm -rf {} + || true
 
-setup: clean
+setup:
 	npm install
-	./db/check-and-migrate.sh
+	npx prisma migrate dev --name init
 	npx prisma db seed
 
 build:

@@ -3,12 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --no-lint",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest",
-    "clean": "rm -rf node_modules .next package-lock.json"
+    "test": "vitest"
   },
   "dependencies": {
     "@prisma/client": "^6.11.1",

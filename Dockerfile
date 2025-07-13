@@ -1,23 +1,22 @@
-# Base image
-FROM node:20-alpine
-
-# Set working directory
+# Install dependencies only when package files change
+FROM node:20-alpine AS deps
 WORKDIR /app
-
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install dependencies
+COPY package.json package-lock.json ./
 RUN npm install
 
-# Copy the rest of the application code
+# Build the application
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-# Build the Next.js application
 RUN npm run build
 
-# Expose port 3000
-EXPOSE 3000
+# Production image
+FROM node:20-alpine AS runner
+WORKDIR /app
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 
-# Command to run the application
+EXPOSE 3000
 CMD ["npm", "start"]
