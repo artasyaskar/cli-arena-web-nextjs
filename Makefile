@@ -1,7 +1,9 @@
 .PHONY: clean setup build serve test lint
 
 clean:
-	rm -rf node_modules package-lock.json .next
+	@echo "Cleaning up node_modules and build artifacts..."
+	@rm -rf node_modules .next package-lock.json || true
+	@find node_modules -type d -name 'build' -exec rm -rf {} + || true
 
 setup: clean
 	npm install
