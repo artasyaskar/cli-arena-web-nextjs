@@ -1,1 +1,1 @@
-CREATE TABLE "new_table" (id INT);
+﻿CREATE TABLE "new_table" (id INT);

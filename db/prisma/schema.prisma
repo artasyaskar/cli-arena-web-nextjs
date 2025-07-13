@@ -9,11 +9,18 @@ generator client {
 
 model User {
   id        String   @id @default(cuid())
+  name      String?
   email     String   @unique
   password  String
+  role      Role     @default(USER)
   createdAt DateTime @default(now())
   sessions  Session[]
   logs      Log[]
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model Session {
