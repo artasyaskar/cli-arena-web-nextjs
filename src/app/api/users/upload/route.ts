@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     for await (const chunk of stream) {
       buffer += chunk.toString();
-      let lines = buffer.split('\n');
+      const lines = buffer.split('\n');
       buffer = lines.pop() || '';
 
       if (headers.length === 0) {

@@ -16,6 +16,7 @@ model User {
   createdAt DateTime @default(now())
   sessions  Session[]
   logs      Log[]
+  auditLogs AuditLog[]
 }
 
 enum Role {
@@ -43,3 +44,12 @@ model Organization {
   name      String
   createdAt DateTime @default(now())
 }
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  action    String
+  ipAddress String
+  userAgent String
+  createdAt DateTime @default(now())
+} // <-- This closing brace was missing

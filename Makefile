@@ -1,6 +1,9 @@
-.PHONY: setup build serve test lint
+.PHONY: clean setup build serve test lint
 
-setup:
+clean:
+	rm -rf node_modules package-lock.json .next
+
+setup: clean
 	npm install
 	./db/check-and-migrate.sh
 	npx prisma db seed
