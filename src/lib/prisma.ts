@@ -10,11 +10,16 @@ if (process.env.NODE_ENV !== 'production') {
   globalThis.prisma = prisma;
 }
 
+interface MiddlewareParams {
+  model?: string;
+  args: any;
+}
+
 // Tenant middleware for multi-tenant functionality
-export const tenantMiddleware = (params: any, next: Function) => {
+export const tenantMiddleware = (params: MiddlewareParams, next: (params: MiddlewareParams) => Promise<any>) => {
   const tenantSpecificModels = ['Log', 'Document', 'Project']; // Add more as needed
   
-  if (tenantSpecificModels.includes(params.model)) {
+  if (params.model && tenantSpecificModels.includes(params.model)) {
     // Add organizationId to where clause for tenant-specific models
     const modifiedParams = {
       ...params,

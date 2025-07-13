@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { LogEntry } from '@/lib/logger';
+import { logEmitter } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -16,7 +18,7 @@ export async function GET(request: NextRequest) {
   const stream = new ReadableStream({
     start(controller) {
       const encoder = new TextEncoder();
-      const onLog = (logEntry: any) => {
+      const onLog = (logEntry: LogEntry) => {
         if (logEntry.userId === userId) {
           controller.enqueue(
             encoder.encode(`data: ${JSON.stringify(logEntry)}\n\n`)
@@ -60,7 +62,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(logEntry);
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to create log entry' },
       { status: 500 }

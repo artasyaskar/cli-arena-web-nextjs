@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       accessToken: 'new-access-token',
       refreshToken: 'new-refresh-token'
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Token refresh failed' },
       { status: 500 }

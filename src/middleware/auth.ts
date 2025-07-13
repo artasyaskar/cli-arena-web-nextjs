@@ -31,7 +31,7 @@ export async function verifyToken(token: string): Promise<JWTPayload | null> {
 
     const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
     return decoded;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -43,7 +43,7 @@ export async function blacklistToken(token: string): Promise<void> {
       const expiry = decoded.exp - Math.floor(Date.now() / 1000);
       await redis.set(`blacklist:${token}`, 'true', 'EX', expiry);
     }
-  } catch (error) {
+  } catch {
     // Ignore errors
   }
 }
@@ -69,17 +69,19 @@ export async function authMiddleware(req: NextRequest): Promise<NextResponse | n
   }
 
   // Add user to request (in a real app, you'd extend the request type)
-  (req as any).user = payload;
+  (req as AuthenticatedRequest).user = payload;
   
   return null; // Continue to next middleware/handler
 }
 
-export function requireAuth(handler: Function) {
+type AuthenticatedHandler = (req: AuthenticatedRequest, ...args: any[]) => Promise<NextResponse>;
+
+export function requireAuth(handler: AuthenticatedHandler) {
   return async (req: NextRequest, ...args: any[]) => {
     const authError = await authMiddleware(req);
     if (authError) {
       return authError;
     }
-    return handler(req, ...args);
+    return handler(req as AuthenticatedRequest, ...args);
   };
 }

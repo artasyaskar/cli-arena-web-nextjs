@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { Readable } from 'stream';
 
+interface UserData {
+  [key: string]: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
@@ -15,7 +19,7 @@ export async function POST(request: NextRequest) {
 
     let buffer = '';
     let headers: string[] = [];
-    const users: any[] = [];
+    const users: UserData[] = [];
     const batchSize = 50;
 
     for await (const chunk of stream) {
@@ -30,9 +34,9 @@ export async function POST(request: NextRequest) {
       for (const line of lines) {
         if (line.trim()) {
           const values = line.split(',');
-          const user = {};
+          const user: UserData = {};
           headers.forEach((header, index) => {
-            (user as any)[header.trim()] = values[index]?.trim();
+            user[header.trim()] = values[index]?.trim();
           });
           users.push(user);
 
@@ -57,7 +61,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       message: 'CSV processed successfully',
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Upload failed' },
       { status: 500 }
