@@ -47,7 +47,7 @@ export async function updateUser(id: string, formData: FormData) {
 
     revalidatePath('/users');
     return { success: true, user };
-  } catch (error) {
+  } catch {
     throw new Error('Failed to update user');
   }
 }
@@ -60,7 +60,7 @@ export async function deleteUser(id: string) {
 
     revalidatePath('/users');
     return { success: true };
-  } catch (error) {
+  } catch {
     throw new Error('Failed to delete user');
   }
 }

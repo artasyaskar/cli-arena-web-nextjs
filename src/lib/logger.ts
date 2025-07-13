@@ -9,7 +9,7 @@ export interface LogEntry {
   message: string;
   timestamp: Date;
   userId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export class Logger {
@@ -23,7 +23,7 @@ export class Logger {
     return Logger.instance;
   }
 
-  log(level: LogEntry['level'], message: string, userId?: string, metadata?: Record<string, any>) {
+  log(level: LogEntry['level'], message: string, userId?: string, metadata?: Record<string, unknown>) {
     const entry: LogEntry = {
       id: Math.random().toString(36),
       level,
@@ -45,19 +45,19 @@ export class Logger {
     console.log(`[${entry.level.toUpperCase()}] ${entry.message}`, entry.metadata);
   }
 
-  debug(message: string, userId?: string, metadata?: Record<string, any>) {
+  debug(message: string, userId?: string, metadata?: Record<string, unknown>) {
     this.log('debug', message, userId, metadata);
   }
 
-  info(message: string, userId?: string, metadata?: Record<string, any>) {
+  info(message: string, userId?: string, metadata?: Record<string, unknown>) {
     this.log('info', message, userId, metadata);
   }
 
-  warn(message: string, userId?: string, metadata?: Record<string, any>) {
+  warn(message: string, userId?: string, metadata?: Record<string, unknown>) {
     this.log('warn', message, userId, metadata);
   }
 
-  error(message: string, userId?: string, metadata?: Record<string, any>) {
+  error(message: string, userId?: string, metadata?: Record<string, unknown>) {
     this.log('error', message, userId, metadata);
   }
 

@@ -74,7 +74,7 @@ export const rbacMiddleware = async (req: NextRequest) => {
           { status: 403 }
         );
       }
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         { error: 'Invalid token' },
         { status: 401 }
