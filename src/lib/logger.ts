@@ -1,3 +1,8 @@
+import { prisma } from './prisma';
+import { EventEmitter } from 'events';
+
+export const logEmitter = new EventEmitter();
+
 export interface LogEntry {
   id: string;
   level: 'debug' | 'info' | 'warn' | 'error';
@@ -29,6 +34,7 @@ export class Logger {
     };
 
     this.logs.push(entry);
+    logEmitter.emit('log', entry);
     
     // Keep only last 1000 logs in memory
     if (this.logs.length > 1000) {
@@ -64,3 +70,13 @@ export class Logger {
 }
 
 export const logger = Logger.getInstance();
+
+export const log = async (message: string, userId: string) => {
+  const logEntry = await prisma.log.create({
+    data: {
+      message,
+      userId,
+    },
+  });
+  logEmitter.emit('log', logEntry);
+};

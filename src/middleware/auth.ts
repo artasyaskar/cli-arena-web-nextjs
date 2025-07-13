@@ -13,17 +13,19 @@ export interface AuthenticatedRequest extends NextRequest {
 
 export const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key';
 
-// Blacklist for invalidated tokens (in production, use Redis)
-const tokenBlacklist = new Set<string>();
+import { Redis } from 'ioredis';
+
+const redis = new Redis(process.env.REDIS_URL);
 
 export function signToken(payload: Omit<JWTPayload, 'exp'>): string {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: '24h' });
 }
 
-export function verifyToken(token: string): JWTPayload | null {
+export async function verifyToken(token: string): Promise<JWTPayload | null> {
   try {
     // Check if token is blacklisted
-    if (tokenBlacklist.has(token)) {
+    const isBlacklisted = await redis.get(`blacklist:${token}`);
+    if (isBlacklisted) {
       return null;
     }
 
@@ -34,11 +36,19 @@ export function verifyToken(token: string): JWTPayload | null {
   }
 }
 
-export function blacklistToken(token: string): void {
-  tokenBlacklist.add(token);
+export async function blacklistToken(token: string): Promise<void> {
+  try {
+    const decoded = jwt.decode(token) as JWTPayload;
+    if (decoded && decoded.exp) {
+      const expiry = decoded.exp - Math.floor(Date.now() / 1000);
+      await redis.set(`blacklist:${token}`, 'true', 'EX', expiry);
+    }
+  } catch (error) {
+    // Ignore errors
+  }
 }
 
-export function authMiddleware(req: NextRequest): NextResponse | null {
+export async function authMiddleware(req: NextRequest): Promise<NextResponse | null> {
   const authHeader = req.headers.get('authorization');
   
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -49,7 +59,7 @@ export function authMiddleware(req: NextRequest): NextResponse | null {
   }
 
   const token = authHeader.substring(7);
-  const payload = verifyToken(token);
+  const payload = await verifyToken(token);
 
   if (!payload) {
     return NextResponse.json(
@@ -66,7 +76,7 @@ export function authMiddleware(req: NextRequest): NextResponse | null {
 
 export function requireAuth(handler: Function) {
   return async (req: NextRequest, ...args: any[]) => {
-    const authError = authMiddleware(req);
+    const authError = await authMiddleware(req);
     if (authError) {
       return authError;
     }
