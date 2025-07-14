@@ -30,9 +30,8 @@ test:
 
 # Run linter inside container
 lint:
-	docker-compose exec web npm run lint
+	docker-compose run --rm web sh -c "npm install --legacy-peer-deps && npm run lint"
 
-# Optional: force-reset Prisma schema & re-seed (⚠️ destructive)
 # Optional: force-reset Prisma schema & re-seed (⚠️ destructive)
 prisma-reset:
 	docker-compose run --rm web sh -c "\
