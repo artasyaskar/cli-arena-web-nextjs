@@ -24,6 +24,8 @@ services:
       GITHUB_CLIENT_SECRET: your-github-client-secret
       NEXTAUTH_URL: http://localhost:3000
       NEXTAUTH_SECRET: your-nextauth-secret
+    volumes:
+      - .:/usr/src/app
 
   db:
     image: postgres:13
