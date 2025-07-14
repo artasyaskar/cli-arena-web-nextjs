@@ -1,7 +1,5 @@
 # docker-compose.yml for the cli-arena-web-nextjs project
 
-version: '3.8'
-
 services:
   web:
     build: .

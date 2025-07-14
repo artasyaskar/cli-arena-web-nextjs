@@ -8,7 +8,7 @@ all: setup build test
 
 # Install dependencies and initialize the database
 setup:
-	npm install
+	npm install --legacy-peer-deps
 	npx prisma migrate dev --name init
 	npm run db:seed
 
@@ -26,11 +26,10 @@ stop:
 
 # Run the test suite
 test:
-	npm test
-	./tasks/run_all_tests.sh
+	docker-compose exec web npm test
 
 # Lint the codebase
 lint:
-	npm run lint
+	docker-compose exec web npm run lint
 
 .PHONY: all setup build serve stop test lint
