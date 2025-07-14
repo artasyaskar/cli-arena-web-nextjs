@@ -1,0 +1,158 @@
+{
+  "version": "1.0",
+  "repository": "cli-arena-web-nextjs",
+  "total_tasks": 15,
+  "categories": {
+    "feature_development": [
+      "websocket-chat",
+      "two-factor-auth",
+      "file-upload-s3",
+      "stripe-subscriptions",
+      "graphql-support",
+      "dynamic-sitemap",
+      "openai-summarizer",
+      "github-oauth",
+      "analytics-dashboard"
+    ],
+    "bug_fixes": [],
+    "devops": [
+      "rate-limiting-middleware",
+      "audit-logging",
+      "ci-cd-caching"
+    ],
+    "testing": [],
+    "refactoring": [
+      "refactor-monolithic-api",
+      "db-schema-introspection-cli",
+      "unused-imports-linter"
+    ]
+  },
+  "difficulty_distribution": {
+    "easy": 0,
+    "medium": 0,
+    "hard": 15
+  },
+  "estimated_total_time": 1350,
+  "tasks": [
+    {
+      "id": "websocket-chat",
+      "title": "Implement Real-Time WebSocket Chat",
+      "difficulty": "hard",
+      "estimated_time": 90,
+      "category": "feature_development",
+      "tags": ["websockets", "redis", "nextjs"]
+    },
+    {
+      "id": "rate-limiting-middleware",
+      "title": "Build Rate-Limiting Middleware",
+      "difficulty": "hard",
+      "estimated_time": 90,
+      "category": "devops",
+      "tags": ["redis", "middleware", "nextjs"]
+    },
+    {
+      "id": "two-factor-auth",
+      "title": "Add 2FA Login System",
+      "difficulty": "hard",
+      "estimated_time": 90,
+      "category": "feature_development",
+      "tags": ["auth", "totp", "nextjs"]
+    },
+    {
+      "id": "refactor-monolithic-api",
+      "title": "Refactor Monolithic API into RESTful Modules",
+      "difficulty": "hard",
+      "estimated_time": 90,
+      "category": "refactoring",
+      "tags": ["api", "rest", "nextjs"]
+    },
+    {
+      "id": "db-schema-introspection-cli",
+      "title": "Create a Custom CLI Tool to Introspect DB Schema",
+      "difficulty": "hard",
+      "estimated_time": 90,
+      "category": "refactoring",
+      "tags": ["cli", "database", "typescript"]
+    },
+    {
+      "id": "file-upload-s3",
+      "title": "Add File Upload + S3 Integration for User Avatars",
+      "difficulty": "hard",
+      "estimated_time": 90,
+      "category": "feature_development",
+      "tags": ["s3", "file-upload", "nextjs"]
+    },
+    {
+      "id": "stripe-subscriptions",
+      "title": "Implement Stripe-Powered Subscription System",
+      "difficulty": "hard",
+      "estimated_time": 90,
+      "category": "feature_development",
+      "tags": ["stripe", "payments", "nextjs"]
+    },
+    {
+      "id": "audit-logging",
+      "title": "Build Audit Logging Middleware",
+      "difficulty": "hard",
+      "estimated_time": 90,
+      "category": "devops",
+      "tags": ["middleware", "security", "nextjs"]
+    },
+    {
+      "id": "graphql-support",
+      "title": "Setup GraphQL Support",
+      "difficulty": "hard",
+      "estimated_time": 90,
+      "category": "feature_development",
+      "tags": ["graphql", "api", "nextjs"]
+    },
+    {
+      "id": "dynamic-sitemap",
+      "title": "Add Dynamic Sitemap and SEO Metadata",
+      "difficulty": "hard",
+      "estimated_time": 90,
+      "category": "feature_development",
+      "tags": ["seo", "sitemap", "nextjs"]
+    },
+    {
+      "id": "openai-summarizer",
+      "title": "Integrate OpenAI API to Summarize Blog Articles",
+      "difficulty": "hard",
+      "estimated_time": 90,
+      "category": "feature_development",
+      "tags": ["openai", "api", "nextjs"]
+    },
+    {
+      "id": "github-oauth",
+      "title": "Add GitHub OAuth Login",
+      "difficulty": "hard",
+      "estimated_time": 90,
+      "category": "feature_development",
+      "tags": ["auth", "oauth", "nextjs"]
+    },
+    {
+      "id": "unused-imports-linter",
+      "title": "Write a Linter for Unused Imports",
+      "difficulty": "hard",
+      "estimated_time": 90,
+      "category": "refactoring",
+      "tags": ["linter", "typescript", "tools"]
+    },
+    {
+      "id": "ci-cd-caching",
+      "title": "Design CI/CD Caching Mechanism",
+      "difficulty": "hard",
+      "estimated_time": 90,
+      "category": "devops",
+      "tags": ["ci-cd", "caching", "github-actions"]
+    },
+    {
+      "id": "analytics-dashboard",
+      "title": "Build an Analytics Dashboard",
+      "difficulty": "hard",
+      "estimated_time": 90,
+      "category": "feature_development",
+      "tags": ["charts", "analytics", "nextjs"]
+    }
+  ]
+}
