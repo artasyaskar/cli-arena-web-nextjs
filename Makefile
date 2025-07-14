@@ -26,7 +26,9 @@ stop:
 
 # Run test suite inside container
 test:
+	docker-compose up -d
 	docker-compose exec web npm run test
+
 
 # Run linter inside container
 lint:

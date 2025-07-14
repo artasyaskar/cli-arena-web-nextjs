@@ -26,6 +26,11 @@ services:
       NEXTAUTH_SECRET: your-nextauth-secret
     volumes:
       - .:/usr/src/app
+      - /usr/src/app/node_modules
+    deploy:
+      resources:
+        limits:
+          memory: 1g  # ✅ Prevent Error 137 (OOM)
 
   db:
     image: postgres:13
