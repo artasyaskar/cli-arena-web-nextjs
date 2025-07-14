@@ -1,28 +1,47 @@
 # Dockerfile for the cli-arena-web-nextjs project
 
-# Use an official Node.js runtime as a parent image
-FROM node:18-alpine
+# Use Node 20 LTS (compatible with canvas, Prisma, tsx)
+FROM node:20-alpine
 
-# Set the working directory in the container
+# Install native dependencies for canvas, tsx, and Prisma
+RUN apk add --no-cache \
+  build-base \
+  cairo-dev \
+  jpeg-dev \
+  pango-dev \
+  giflib-dev \
+  pixman-dev \
+  python3 \
+  pkgconfig \
+  openssl \
+  openssl-dev
+
+# Set working directory
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json to the working directory
+# Copy only package files to leverage Docker layer caching
 COPY package*.json ./
 
-# Install dependencies
+# Install all dependencies
 RUN npm install --legacy-peer-deps
 
-# Install development dependencies
-RUN npm install --save-dev jest eslint
+# Copy Prisma schema early so `prisma generate` doesn't fail
+COPY prisma ./prisma
 
-# Copy the rest of the application's source code
+# Generate Prisma client
+RUN npx prisma generate
+
+# Copy rest of the application code
 COPY . .
 
-# Build the Next.js application
+# Build the app
 RUN npm run build
 
-# Expose the port the app runs on
+# Set NODE_ENV to production
+ENV NODE_ENV=production
+
+# Expose the app port
 EXPOSE 3000
 
-# Command to run the application
+# Start the app
 CMD ["npm", "start"]

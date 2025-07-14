@@ -1,35 +1,44 @@
 # Makefile for the cli-arena-web-nextjs project
 
-# Stop on all errors
+# Stop if any command fails
 .SHELLFLAGS = -ec
 
 # Default target
-all: setup build test
+all: setup build test lint
 
-# Install dependencies and initialize the database
+# Install dependencies and initialize DB
 setup:
-	npm install --legacy-peer-deps
-	npx prisma migrate dev --name init
-	npm run db:seed
+	docker-compose run --rm web sh -c "npm install --legacy-peer-deps"
+	docker-compose run --rm web sh -c "npx prisma migrate dev --name init || npx prisma migrate reset --force"
+	docker-compose run --rm web sh -c "npm run db:seed"
 
-# Build the Next.js application
+# Build the app using Docker
 build:
 	docker-compose build
 
-# Start the application and its services
+# Serve app and services in background
 serve:
 	docker-compose up -d
 
-# Stop the application and its services
+# Stop all running containers
 stop:
 	docker-compose down
 
-# Run the test suite
+# Run test suite inside container
 test:
-	docker-compose exec web npm test
+	docker-compose exec web npm run test
 
-# Lint the codebase
+# Run linter inside container
 lint:
 	docker-compose exec web npm run lint
 
-.PHONY: all setup build serve stop test lint
+# Optional: force-reset Prisma schema & re-seed (⚠️ destructive)
+# Optional: force-reset Prisma schema & re-seed (⚠️ destructive)
+prisma-reset:
+	docker-compose run --rm web sh -c "\
+		npx prisma migrate reset --force && \
+		npx prisma generate && \
+		npm run db:seed"
+
+
+.PHONY: all setup build serve stop test lint prisma-reset
