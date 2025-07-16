@@ -27,12 +27,12 @@ stop:
 # Run test suite inside container
 test:
 	docker-compose up -d
-	docker-compose exec web npm run test
+	docker-compose exec web node --max_old_space_size=4096 ./node_modules/.bin/jest --runInBand --config jest.config.cjs
 
 
 # Run linter inside container
 lint:
-	docker-compose run --rm web sh -c "npm install --legacy-peer-deps && npm run lint"
+	docker-compose run --rm web sh -c "npm run lint"
 
 # Optional: force-reset Prisma schema & re-seed (⚠️ destructive)
 prisma-reset:
